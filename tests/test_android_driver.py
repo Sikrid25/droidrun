@@ -270,10 +270,11 @@ class TestInputActions:
         await driver.press_key(3)
 
     @pytest.mark.asyncio
-    async def test_drag_not_implemented(self, driver: AndroidDriver):
-        """drag should raise NotImplementedError."""
-        with pytest.raises(NotImplementedError):
-            await driver.drag(100, 100, 500, 500)
+    async def test_drag(self, driver: AndroidDriver):
+        """drag should move from point A to point B without raising."""
+        await driver.press_key(3)
+        await asyncio.sleep(0.5)
+        await driver.drag(540, 1200, 540, 400, 1.0)
 
 
 # ============================================================================

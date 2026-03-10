@@ -110,7 +110,8 @@ class AndroidDriver(DeviceDriver):
         duration: float = 3.0,
     ) -> None:
         await self.ensure_connected()
-        raise NotImplementedError("Drag is not implemented yet")
+        await self.device.swipe(x1, y1, x2, y2, duration)
+        await asyncio.sleep(duration)
 
     # -- app management ------------------------------------------------------
 
