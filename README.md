@@ -1,123 +1,121 @@
-<picture align="center">
-  <source media="(prefers-color-scheme: dark)" srcset="./static/droidrun-dark.png">
-  <source media="(prefers-color-scheme: light)" srcset="./static/droidrun.png">
-  <img src="./static/droidrun.png"  width="full">
-</picture>
+# DroidRun — Android Device Driver
 
-<h3 align="center"><em>DroidRun is not affiliated with, endorsed by, or sponsored by Google LLC or the Android Open Source Project. Android™ is a trademark of Google LLC.</em></h3>
+A Python library for controlling Android devices programmatically via ADB and [DroidRun Portal](https://github.com/droidrun/droidrun-portal).
 
-<div align="center">
+This is a stripped-down version of the [DroidRun framework](https://github.com/droidrun/droidrun) — all LLM agent, CLI, and telemetry components have been removed. What remains is a clean, async device driver for Android automation.
 
-[![Docs](https://img.shields.io/badge/Docs-📕-0D9373?style=for-the-badge)](https://docs.droidrun.ai)
-[![Cloud](https://img.shields.io/badge/Cloud-☁️-0D9373?style=for-the-badge)](https://cloud.droidrun.ai/sign-in?waitlist=true)
+## How It Works
 
+DroidRun Portal is an Android APK that runs as an accessibility service on the device. It exposes the UI tree, text input, and screenshot capabilities through ADB (content provider or TCP).
 
-[![GitHub stars](https://img.shields.io/github/stars/droidrun/droidrun?style=social)](https://github.com/droidrun/droidrun/stargazers)
-[![droidrun.ai](https://img.shields.io/badge/droidrun.ai-white)](https://droidrun.ai)
-[![Twitter Follow](https://img.shields.io/twitter/follow/droid_run?style=social)](https://x.com/droid_run)
-[![Discord](https://img.shields.io/discord/1360219330318696488?color=white&label=Discord&logo=discord&logoColor=white)](https://discord.gg/ZZbKEZZkwK)
-[![Benchmark](https://img.shields.io/badge/Benchmark-91.4﹪-white)](https://droidrun.ai/benchmark)
+This library (`AndroidDriver`) communicates with the Portal via ADB to control the device.
 
-
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://api.producthunt.com/widgets/embed-image/v1/top-post-badge.svg?post_id=983810&theme=dark&period=daily&t=1753948032207">
-  <source media="(prefers-color-scheme: light)" srcset="https://api.producthunt.com/widgets/embed-image/v1/top-post-badge.svg?post_id=983810&theme=neutral&period=daily&t=1753948125523">
-  <a href="https://www.producthunt.com/products/droidrun-framework-for-mobile-agent?embed=true&utm_source=badge-top-post-badge&utm_medium=badge&utm_source=badge-droidrun" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/top-post-badge.svg?post_id=983810&theme=neutral&period=daily&t=1753948125523" alt="Droidrun - Give&#0032;AI&#0032;native&#0032;control&#0032;of&#0032;physical&#0032;&#0038;&#0032;virtual&#0032;phones&#0046; | Product Hunt" style="width: 200px; height: 54px;" width="200" height="54" /></a>
-</picture>
-
-
-[Deutsch](https://zdoc.app/de/droidrun/droidrun) | 
-[Español](https://zdoc.app/es/droidrun/droidrun) | 
-[français](https://zdoc.app/fr/droidrun/droidrun) | 
-[日本語](https://zdoc.app/ja/droidrun/droidrun) | 
-[한국어](https://zdoc.app/ko/droidrun/droidrun) | 
-[Português](https://zdoc.app/pt/droidrun/droidrun) | 
-[Русский](https://zdoc.app/ru/droidrun/droidrun) | 
-[中文](https://zdoc.app/zh/droidrun/droidrun)
-
-</div>
-
-
-
-DroidRun is a powerful framework for controlling Android and iOS devices through LLM agents. It allows you to automate device interactions using natural language commands. [Checkout our benchmark results](https://droidrun.ai/benchmark)
-
-## ⚖️ Disclaimer
-
-Droidrun is an independent, open-source project and is not affiliated with, endorsed by, or sponsored by Google LLC or the Android Open Source Project. "Android" is a trademark of Google LLC. All other trademarks and brand names mentioned are the property of their respective owners. DroidRun is a third-party tool that interacts with the Android platform but is not part of the Android ecosystem.
-
-## Why Droidrun?
-
-- 🤖 Control Android and iOS devices with natural language commands
-- 🔀 Supports multiple LLM providers (OpenAI, Anthropic, Gemini, Ollama, DeepSeek)
-- 🧠 Planning capabilities for complex multi-step tasks
-- 💻 Easy to use CLI with enhanced debugging features
-- 🐍 Extendable Python API for custom automations
-- 📸 Screenshot analysis for visual understanding of the device
-- 🫆 Execution tracing with Arize Phoenix
-
-## 📦 Installation
-
-> **Note:** Python 3.14 is not currently supported. Please use Python 3.11 – 3.13.
-
-```bash
-pip install droidrun
+```
+Your Python script
+    → AndroidDriver (this library)
+        → ADB
+            → DroidRun Portal APK (on device)
+                → Android Accessibility Service
 ```
 
-## 🚀 Quickstart
-Read on how to get droidrun up and running within seconds in [our docs](https://docs.droidrun.ai/v3/quickstart)!   
+## Installation
 
-[![Quickstart Video](https://img.youtube.com/vi/4WT7FXJah2I/0.jpg)](https://www.youtube.com/watch?v=4WT7FXJah2I)
+```bash
+pip install -e .
+```
 
-## 🎬 Demo Videos
+**Requirements:** Python 3.11 – 3.13
 
-1. **Accommodation booking**: Let Droidrun search for an apartment for you
+## Quick Start
 
-   [![Droidrun Accommodation Booking Demo](https://img.youtube.com/vi/VUpCyq1PSXw/0.jpg)](https://youtu.be/VUpCyq1PSXw)
+```python
+import asyncio
+from droidrun import AndroidDriver
 
-<br>
+async def main():
+    driver = AndroidDriver(serial="emulator-5554")
+    await driver.connect()
 
-2. **Trend Hunter**: Let Droidrun hunt down trending posts
+    # Tap a point on screen
+    await driver.tap(500, 300)
 
-   [![Droidrun Trend Hunter Demo](https://img.youtube.com/vi/7V8S2f8PnkQ/0.jpg)](https://youtu.be/7V8S2f8PnkQ)
+    # Type text into focused field
+    await driver.input_text("hello world")
 
-<br>
+    # Swipe down
+    await driver.swipe(500, 300, 500, 1200, 300)
 
-3. **Streak Saver**: Let Droidrun save your streak on your favorite language learning app
+    # Press back button
+    await driver.press_key(4)
 
-   [![Droidrun Streak Saver Demo](https://img.youtube.com/vi/B5q2B467HKw/0.jpg)](https://youtu.be/B5q2B467HKw)
+    # Get UI accessibility tree
+    ui_tree = await driver.get_ui_tree()
 
+    # Take screenshot (PNG bytes)
+    screenshot = await driver.screenshot()
 
-## 💡 Example Use Cases
+    # Launch an app
+    await driver.start_app("com.android.settings")
 
-- Automated UI testing of mobile applications
-- Creating guided workflows for non-technical users
-- Automating repetitive tasks on mobile devices
-- Remote assistance for less technical users
-- Exploring mobile UI with natural language commands
+asyncio.run(main())
+```
 
-## 👥 Contributing
+## Portal Setup
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+The DroidRun Portal APK must be installed and its accessibility service enabled before use:
 
-## 📄 License
+```python
+from droidrun.portal import setup_portal
+from async_adbutils import adb
 
-This project is licensed under the MIT License - see the LICENSE file for details. 
+async def setup():
+    device = await adb.device(serial="emulator-5554")
+    await setup_portal(device, debug=False)
+```
 
-## Security Checks
+## API Reference
 
-To ensure the security of the codebase, we have integrated security checks using `bandit` and `safety`. These tools help identify potential security issues in the code and dependencies.
+### AndroidDriver
 
-### Running Security Checks
+| Method | Description |
+|--------|-------------|
+| `connect()` | Connect to device via ADB and Portal |
+| `tap(x, y)` | Tap at screen coordinates |
+| `swipe(x1, y1, x2, y2, duration_ms)` | Swipe gesture |
+| `input_text(text, clear)` | Type text into focused input |
+| `press_key(keycode)` | Send keyevent (4=back, 3=home, 66=enter) |
+| `start_app(package, activity?)` | Launch an application |
+| `install_app(path)` | Install APK from file path |
+| `get_apps(include_system)` | List installed apps with labels |
+| `list_packages(include_system)` | List package names |
+| `screenshot(hide_overlay)` | Capture screen as PNG bytes |
+| `get_ui_tree()` | Get accessibility tree as dict |
+| `get_date()` | Get device date/time |
 
-Before submitting any code, please run the following security checks:
+### Other Classes
 
-1. **Bandit**: A tool to find common security issues in Python code.
-   ```bash
-   bandit -r droidrun
-   ```
+| Class | Purpose |
+|-------|---------|
+| `DeviceDriver` | Abstract base class for all drivers |
+| `RecordingDriver` | Replay recorded action sequences |
+| `StateProvider` | Orchestrates UI state fetching + filtering |
+| `UIState` | Snapshot of screen elements |
 
-2. **Safety**: A tool to check your installed dependencies for known security vulnerabilities.
-   ```bash
-   safety scan
-   ```
+## Dependencies
+
+| Package | Purpose |
+|---------|---------|
+| `async_adbutils` | ADB communication |
+| `pydantic` | Data validation |
+| `rich` | Console output |
+| `httpx` | HTTP client (Portal TCP mode) |
+| `aiofiles` | Async file operations |
+| `requests` | Portal APK download |
+
+## Based On
+
+This is a fork of [droidrun/droidrun](https://github.com/droidrun/droidrun) v0.5.1, retaining only the device driver layer (`droidrun/tools/` and `droidrun/portal.py`).
+
+## License
+
+MIT
